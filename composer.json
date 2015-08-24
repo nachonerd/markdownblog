@@ -1,6 +1,6 @@
 {
     "name": "nachonerd/markdownblog",
-    "description": "Minimalist Markdown Blog base on silex",
+    "description": "Minimalist Markdown Blog based on silex",
     "type": "BlogFramework",
     "version": "0.0.1",
     "keywords": ["PHP", "Markdown", "Blog", "Framework"],
