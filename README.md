@@ -2,7 +2,7 @@ Markdown Blog
 ===============
 
 ### Description
-Minimalist Markdown Blog Framework base on Silex
+Minimalist Markdown Blog Framework based on Silex
 
 ### License
 GNU GPL v3
