@@ -1,0 +1,28 @@
+{
+    "name": "nachonerd/markdownblog",
+    "description": "Minimalist Markdown Blog base on silex",
+    "type": "BlogFramework",
+    "version": "0.0.1",
+    "keywords": ["PHP", "Markdown", "Blog", "Framework"],
+    "license": "GNU GPL v3",
+    "autoload": {
+        "psr-4": {"NachoNerd\\MarkdownBlog\\": "src/"}
+    },
+    "authors": [
+        {
+            "name": "Ignacio Rodrigo Galieri",
+            "email": "irgalieri@gmail.com"
+        }
+    ],
+    "support": {
+        "email": "irgalieri@gmail.com",
+        "issues": "https://github.com/nachonerd/markdownblog/issues"
+    },
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.7.*",
+        "squizlabs/php_codesniffer": "2.*"
+    }
+}
