@@ -18,8 +18,8 @@
  *
  * PHP VERSION 5.4
  *
- * @category  Test
- * @package   Test
+ * @category  Rundeable
+ * @package   Main
  * @author    Ignacio R. Galieri <irgalieri@gmail.com>
  * @copyright 2015 Ignacio R. Galieri
  * @license   GNU GPL v3
@@ -27,3 +27,6 @@
  */
 $path = realpath(__DIR__."/../");
 require_once $path.'/vendor/autoload.php';
+
+$app = new \NachoNerd\MarkdownBlog\Application();
+$app->run();
