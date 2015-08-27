@@ -16,12 +16,28 @@ GNU GPL v3
 - [PHP_CodeSniffer 2.x](http://pear.php.net/package/PHP_CodeSniffer/redirected) (optional)
 
 ### Current Version
-__0.0.1__
+__0.0.2__
 
 ### Changelog
 
 __0.0.x__
+- Automatic add pages following config files.
 - Init Enviroment of Testing
 
 __0.0.0__
 - Start Project
+
+### Get Starting
+
+```
+$ git clone git@github.com:nachonerd/markdownblog.git
+$ cd markdownblog
+$ composer install
+```
+
+### Running Test Suite
+
+```
+$ cd markdownblog
+$ vendor/bin/phpunit -c tests/phpunit.xml
+```

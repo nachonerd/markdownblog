@@ -1,0 +1,5 @@
+# errors.yml
+404:
+    page: 404.html.twig
+default:
+    page: other.html.twig

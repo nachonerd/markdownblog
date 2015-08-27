@@ -1,0 +1,14 @@
+# routes.yml
+home:
+    paths:
+        - /home
+        - /
+    _controller: 'Home'
+post:
+    paths:
+        - /post
+    _controller: 'Post'
+about:
+    paths:
+        - /about
+    _controller: 'About'
