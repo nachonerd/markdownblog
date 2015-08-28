@@ -28,6 +28,8 @@
 
 namespace NachoNerd\MarkdownBlog;
 
+use \NachoNerd\MarkdownBlog\Exceptions\ControllerProviderNotFound;
+
 /**
  * Aplication Class
  *
@@ -86,9 +88,12 @@ class Application extends \Silex\Application
                 'twig.path' => $this->viewsPath
             )
         );
-        $this->error(function (\Exception $e, $codeStatus) {
-            return $this->errorPage($e, $codeStatus);
-        });
+        $this->error(
+            function (\Exception $e, $codeStatus) {
+                return $this->errorPage($e, $codeStatus);
+            }
+        );
+        $this->prepareControllerProviders();
         parent::boot();
     }
 
@@ -168,5 +173,73 @@ class Application extends \Silex\Application
             );
         }
         return $html;
+    }
+
+    /**
+     * PrepareControllerProviders
+     *
+     * @return void
+     *
+     * @throws \NachoNerd\MarkdownBlog\Exceptions\WrongConfig
+     */
+    protected function prepareControllerProviders()
+    {
+        $values = $this->parserYaml("routes.yml");
+        if (count($values) <= 0) {
+            throw new \NachoNerd\MarkdownBlog\Exceptions\WrongConfig(
+                "Invalid routes.yml, verify manual.",
+                5
+            );
+        }
+
+        foreach ($values as $section => $config) {
+            if (!isset($config["paths"]) || count($config["paths"]) <= 0) {
+                throw new \NachoNerd\MarkdownBlog\Exceptions\WrongConfig(
+                    sprintf(
+                        "atribute paths not defined in %s, verify manual.",
+                        $section
+                    ),
+                    6
+                );
+            }
+            if (!isset($config["_provider"]) || empty($config["_provider"])) {
+                throw new \NachoNerd\MarkdownBlog\Exceptions\WrongConfig(
+                    sprintf(
+                        "atribute provider not defined in %s, verify manual.",
+                        $section
+                    ),
+                    6
+                );
+            }
+
+            try {
+                $factory = $this->getControllerProviderFactory();
+                $provider = $factory->create($config["_provider"]);
+            } catch (ControllerProviderNotFound $e) {
+                throw new \NachoNerd\MarkdownBlog\Exceptions\WrongConfig(
+                    sprintf(
+                        "ControllerProvider Not Found in section %s",
+                        $section
+                    ),
+                    6
+                );
+            }
+
+            foreach ($config["paths"] as $path) {
+                $this->mount($path, $provider);
+            }
+        }
+    }
+
+    /**
+     * GetControllerProviderFactory
+     *
+     * @return \NachoNerd\MarkdownBlog\Factories\ControllerProvider
+     *
+     * @codeCoverageIgnore
+     */
+    protected function getControllerProviderFactory()
+    {
+        return new \NachoNerd\MarkdownBlog\Factories\ControllerProvider();
     }
 }

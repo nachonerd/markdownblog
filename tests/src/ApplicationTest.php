@@ -447,7 +447,7 @@ YAML;
     {
         $className = "\NachoNerd\MarkdownBlog\Application";
         $app = $this->getMock(
-            $className, array('parserYaml')
+            $className, array('parserYaml', 'prepareControllerProviders')
         );
 
         $yamlObj = new \Symfony\Component\Yaml\Parser();
@@ -456,6 +456,10 @@ YAML;
         $app->expects($this->any())
             ->method('parserYaml')
             ->willReturn($values);
+
+        $app->expects($this->any())
+            ->method('prepareControllerProviders')
+            ->willReturn(true);
 
         $method = new ReflectionMethod(
             $className,
@@ -538,7 +542,7 @@ YAML;
     {
         $className = "\NachoNerd\MarkdownBlog\Application";
         $app = $this->getMock(
-            $className, array('parserYaml')
+            $className, array('parserYaml', 'prepareControllerProviders')
         );
 
         $yamlObj = new \Symfony\Component\Yaml\Parser();
@@ -547,6 +551,10 @@ YAML;
         $app->expects($this->any())
             ->method('parserYaml')
             ->willReturn($values);
+
+        $app->expects($this->any())
+            ->method('prepareControllerProviders')
+            ->willReturn(true);
 
         $method = new ReflectionMethod(
             $className,
@@ -579,5 +587,435 @@ YAML;
             $expectedMessage,
             str_replace("\n", "", $values)
         );
+    }
+
+    /**
+     * Provider Test Atributes Provider Error
+     *
+     * @return array
+     */
+    public function providerTestAtributesProviderError()
+    {
+        $yaml1 = <<<YAML
+YAML;
+        $yaml2 = <<<YAML
+home:
+    paths:
+    _provider: 'Home'
+YAML;
+
+        $yaml3 = <<<YAML
+home:
+    path:
+        - /
+    _provider: 'Home'
+YAML;
+
+        $yaml4 = <<<YAML
+home:
+    _provider: 'Home'
+YAML;
+        $yaml5 = <<<YAML
+home:
+    paths:
+        - /home
+        - /
+    _provider: 'Home'
+post:
+    paths:
+    _provider: 'Post'
+YAML;
+
+        $yaml6 = <<<YAML
+home:
+    paths:
+        - /home
+        - /
+    _provider: 'Home'
+post:
+    path:
+        - /
+    _provider: 'Post'
+YAML;
+
+        $yaml7 = <<<YAML
+home:
+    paths:
+        - /home
+        - /
+    _provider: 'Home'
+post:
+    _provider: 'Post'
+YAML;
+
+        $yaml8 = <<<YAML
+home:
+    paths:
+        - /home
+        - /
+YAML;
+
+        $yaml9 = <<<YAML
+home:
+    paths:
+        - /home
+        - /
+    _provider: ''
+YAML;
+
+        $yaml10 = <<<YAML
+home:
+    paths:
+        - /home
+        - /
+    _providers: 'Post'
+YAML;
+
+        $yaml11 = <<<YAML
+home:
+    paths:
+        - /home
+        - /
+    _provider:
+YAML;
+
+        $yaml12 = <<<YAML
+home:
+    paths:
+        - /home
+        - /
+    _provider: 'Home'
+post:
+    paths:
+        - /home
+        - /
+    _provider: ''
+YAML;
+
+        return array(
+            array(
+                $yaml1,
+                "Invalid routes.yml, verify manual."
+            ),
+            array(
+                $yaml2,
+                "atribute paths not defined in home, verify manual."
+            ),
+            array(
+                $yaml3,
+                "atribute paths not defined in home, verify manual."
+            ),
+            array(
+                $yaml4,
+                "atribute paths not defined in home, verify manual."
+            ),
+            array(
+                $yaml5,
+                "atribute paths not defined in post, verify manual."
+            ),
+            array(
+                $yaml6,
+                "atribute paths not defined in post, verify manual."
+            ),
+            array(
+                $yaml7,
+                "atribute paths not defined in post, verify manual."
+            ),
+            array(
+                $yaml8,
+                "atribute provider not defined in home, verify manual."
+            ),
+            array(
+                $yaml9,
+                "atribute provider not defined in home, verify manual."
+            ),
+            array(
+                $yaml10,
+                "atribute provider not defined in home, verify manual."
+            ),
+            array(
+                $yaml11,
+                "atribute provider not defined in home, verify manual."
+            ),
+            array(
+                $yaml12,
+                "atribute provider not defined in post, verify manual."
+            )
+        );
+    }
+
+    /**
+     * Test Atributes Provider Error
+     *
+     * For each Items in routes.yml file verify if the attributes (provider and
+     * paths) were defined, if they weren't defined, Application class throws
+     * WrongConfigException with message: invalid routes.yml
+     * (atributes provider and paths not defined in #some section#),
+     * verify manual.
+     *
+     * @param string $yaml            Yaml String
+     * @param string $expectedMessage Expected Message
+     *
+     * @return void
+     *
+     * @dataProvider providerTestAtributesProviderError
+     */
+    public function testAtributesProviderError($yaml, $expectedMessage)
+    {
+        $className = "\NachoNerd\MarkdownBlog\Application";
+        $className1 = "\NachoNerd\MarkdownBlog\Factories\ControllerProvider";
+
+        $app = $this->getMock(
+            $className,
+            array('parserYaml', 'getControllerProviderFactory', 'mount')
+        );
+
+        $yamlObj = new \Symfony\Component\Yaml\Parser();
+        $values = $yamlObj->parse($yaml);
+
+        $app->expects($this->any())
+            ->method('mount')
+            ->willReturn(true);
+
+        $app->expects($this->any())
+            ->method('parserYaml')
+            ->willReturn($values);
+
+        $factory = $this->getMockBuilder($className1)
+            ->setMethods(array('create'))
+            ->getMock();
+
+        $factory->expects($this->any())
+            ->method('create')
+            ->willReturn(null);
+
+        $app->expects($this->any())
+            ->method('getControllerProviderFactory')
+            ->willReturn($factory);
+
+        $method = new ReflectionMethod(
+            $className,
+            'prepareControllerProviders'
+        );
+        $method->setAccessible(true);
+
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\Application'
+        );
+
+        $rp = $reflectedObject->getProperty('viewsPath');
+        $rp->setAccessible(true);
+
+        $rp->setValue(
+            $app,
+            realpath(__DIR__."/../resources/")."/"
+        );
+
+        $message = "";
+        $values = "";
+        try {
+            $values = $method->invoke($app);
+        } catch (\NachoNerd\MarkdownBlog\Exceptions\WrongConfig $e) {
+            $message = $e->getMessage();
+        }
+
+        $this->assertEquals(
+            $expectedMessage,
+            str_replace("\n", "", $message)
+        );
+    }
+
+    /**
+     * ProviderTestControllerProviderNotFoundError
+     *
+     * @return array
+     */
+    public function providerTestControllerProviderNotFoundError()
+    {
+        $yaml1 = <<<YAML
+home:
+    paths:
+        - /home
+        - /
+    _provider: 'Home'
+YAML;
+
+        return array(
+            array(
+                $yaml1,
+                "ControllerProvider Not Found in section home"
+            )
+        );
+    }
+
+    /**
+     * Test ControllerProvider Not Found Error
+     *
+     * For each Items in routes.yml verify if the ControllerProvider, denifed on
+     * the attribute _provider, exists, if its not exists, Application Class
+     * throws WrongConfigException with message: invalid file #Provider Name#
+     * not found
+     *
+     * @param string $yaml            Yaml String
+     * @param string $expectedMessage Expected Message
+     *
+     * @return void
+     *
+     * @dataProvider providerTestControllerProviderNotFoundError
+     */
+    public function testControllerProviderNotFoundError($yaml, $expectedMessage)
+    {
+        $className = "\NachoNerd\MarkdownBlog\Application";
+        $className1 = "\NachoNerd\MarkdownBlog\Factories\ControllerProvider";
+
+        $app = $this->getMock(
+            $className,
+            array('parserYaml', 'getControllerProviderFactory', 'mount')
+        );
+
+        $yamlObj = new \Symfony\Component\Yaml\Parser();
+        $values = $yamlObj->parse($yaml);
+
+        $app->expects($this->any())
+            ->method('mount')
+            ->willReturn(true);
+
+        $app->expects($this->any())
+            ->method('parserYaml')
+            ->willReturn($values);
+
+        $ex = new \NachoNerd\MarkdownBlog\Exceptions\ControllerProviderNotFound(
+            "Not Found",
+            1223
+        );
+
+        $factory = $this->getMockBuilder($className1)
+            ->setMethods(array('create'))
+            ->getMock();
+
+        $factory->expects($this->any())
+            ->method('create')
+            ->will($this->throwException($ex));
+
+        $app->expects($this->any())
+            ->method('getControllerProviderFactory')
+            ->willReturn($factory);
+
+        $method = new ReflectionMethod(
+            $className,
+            'prepareControllerProviders'
+        );
+        $method->setAccessible(true);
+
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\Application'
+        );
+
+        $rp = $reflectedObject->getProperty('viewsPath');
+        $rp->setAccessible(true);
+
+        $rp->setValue(
+            $app,
+            realpath(__DIR__."/../resources/")."/"
+        );
+
+        $message = "";
+        $values = "";
+        try {
+            $values = $method->invoke($app);
+        } catch (\NachoNerd\MarkdownBlog\Exceptions\WrongConfig $e) {
+            $message = $e->getMessage();
+        }
+
+        $this->assertEquals(
+            $expectedMessage,
+            str_replace("\n", "", $message)
+        );
+    }
+
+    /**
+     * Test ControllerProvider Success
+     *
+     *  For each ControllerProvider do mount example:
+     *  $app->mount(
+     *      '/events',
+     *      new NachoNerd\MarkdownBlog\Controllers\EventsController()
+     *  );
+     *
+     * @return void
+     */
+    public function testControllerProviderSuccess()
+    {
+        $yaml = <<<YAML
+home:
+    paths:
+        - /home
+        - /
+    _provider: 'Home'
+post:
+    paths:
+        - /post
+    _provider: 'Post'
+YAML;
+        $className = "\NachoNerd\MarkdownBlog\Application";
+        $className1 = "\NachoNerd\MarkdownBlog\Factories\ControllerProvider";
+        $className2 = "\NachoNerd\MarkdownBlog\Controllers\DummyProvider";
+
+        $app = $this->getMock(
+            $className,
+            array('parserYaml', 'getControllerProviderFactory', 'mount')
+        );
+
+        $yamlObj = new \Symfony\Component\Yaml\Parser();
+        $values = $yamlObj->parse($yaml);
+
+        $app->expects($this->any())
+            ->method('parserYaml')
+            ->willReturn($values);
+
+        $factory = $this->getMockBuilder($className1)
+            ->setMethods(array('create'))
+            ->getMock();
+
+        $provider = $this->getMockBuilder($className2)
+            ->setMethods(array('connect'))
+            ->getMock();
+
+        $factory->expects($this->any())
+            ->method('create')
+            ->willReturn($provider);
+
+        $app->expects($this->any())
+            ->method('getControllerProviderFactory')
+            ->willReturn($factory);
+
+        $app->expects($this->exactly(3))
+            ->method('mount')->willReturn($app);
+
+        $method = new ReflectionMethod(
+            $className,
+            'prepareControllerProviders'
+        );
+        $method->setAccessible(true);
+
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\Application'
+        );
+
+        $rp = $reflectedObject->getProperty('viewsPath');
+        $rp->setAccessible(true);
+
+        $rp->setValue(
+            $app,
+            realpath(__DIR__."/../resources/")."/"
+        );
+
+        $message = "";
+        $values = "";
+        try {
+            $method->invoke($app);
+        } catch (\NachoNerd\MarkdownBlog\Exceptions\WrongConfig $e) {
+            $message = $e->getMessage();
+        }
     }
 }
