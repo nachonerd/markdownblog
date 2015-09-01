@@ -3,4 +3,4 @@ languages:
   JavaScript: true
   PHP: true
 exclude_paths:
- - "tests/"
+ - "tests/*"
