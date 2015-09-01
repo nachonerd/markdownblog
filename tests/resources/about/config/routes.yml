@@ -1,0 +1,13 @@
+# routes.yml
+home:
+    paths:
+        - /
+    _provider: 'DummyProvider'
+post:
+    paths:
+        - /post
+    _provider: 'DummyProvider'
+about:
+    paths:
+        - /about
+    _provider: 'About'

@@ -140,7 +140,7 @@ class Application extends \Silex\Application
      */
     protected function errorPage(\Exception $e, $codeStatus)
     {
-        $values = $this->parserYaml("error.yml");
+        $values = $this->parserYaml("errors.yml");
 
         $code = array();
         $key = $codeStatus;

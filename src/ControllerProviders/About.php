@@ -20,7 +20,7 @@
  *
  * @category   ControllerProvider
  * @package    NachoNerdMarkdownBlog
- * @subpackage Test
+ * @subpackage ControllerProvider
  * @author     Ignacio R. Galieri <irgalieri@gmail.com>
  * @copyright  2015 Ignacio R. Galieri
  * @license    GNU GPL v3
@@ -36,13 +36,13 @@ use Silex\ControllerProviderInterface;
  *
  * @category   ControllerProvider
  * @package    NachoNerdMarkdownBlog
- * @subpackage Test
+ * @subpackage ControllerProviders
  * @author     Ignacio R. Galieri <irgalieri@gmail.com>
  * @copyright  2015 Ignacio R. Galieri
  * @license    GNU GPL v3
  * @link       https://github.com/nachonerd/markdownblog
  */
-class DummyProvider implements \Silex\ControllerProviderInterface
+class About implements \Silex\ControllerProviderInterface
 {
     /**
      * Connect
@@ -56,14 +56,14 @@ class DummyProvider implements \Silex\ControllerProviderInterface
         $controllers = $app['controllers_factory'];
         $controllers
             ->get('/', array($this, 'index'))
-            ->bind('dummy_index');
+            ->bind('about_index');
         return $controllers;
     }
 
     /**
-     * Index
+     * Index About Page
      *
-     * @param Application $app Silex Application
+     * @param \Silex\Application $app Silex Application
      *
      * @return String
      */
