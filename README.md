@@ -1,6 +1,8 @@
 Markdown Blog
 ===============
 
+[![Build Status](https://travis-ci.org/nachonerd/markdownblog.svg?branch=development)](https://travis-ci.org/nachonerd/markdownblog) [![Code Climate](https://codeclimate.com/github/nachonerd/markdownblog/badges/gpa.svg)](https://codeclimate.com/github/nachonerd/markdownblog) [![Test Coverage](https://codeclimate.com/github/nachonerd/markdownblog/badges/coverage.svg)](https://codeclimate.com/github/nachonerd/markdownblog/coverage)
+
 ### Description
 Minimalist Markdown Blog Framework based on Silex
 
