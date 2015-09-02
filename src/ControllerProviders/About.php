@@ -45,6 +45,21 @@ use Silex\ControllerProviderInterface;
 class About implements \Silex\ControllerProviderInterface
 {
     /**
+     * About File Path
+     *
+     * @var string
+     */
+    protected $aboutFile = "";
+
+    /**
+     * About
+     */
+    public function __construct()
+    {
+        $this->aboutFile = realpath(__DIR__."/../../markdowns/misc/about.md");
+    }
+
+    /**
      * Connect
      *
      * @param Application $app Silex Application
@@ -70,5 +85,28 @@ class About implements \Silex\ControllerProviderInterface
     public function index(Application $app)
     {
         return 'Dummy Index';
+    }
+
+    /**
+     * PrepareAboutContect
+     *
+     * @return String
+     *
+     * @throws \NachoNerd\MarkdownBlog\Exceptions\FileNotFound
+     */
+    protected function prepareAboutContect()
+    {
+        if (!file_exists($this->aboutFile)) {
+            throw new \NachoNerd\MarkdownBlog\Exceptions\FileNotFound(
+                $this->aboutFile." not found",
+                9
+            );
+        }
+        $parser = new \cebe\markdown\MarkdownExtra();
+        return $parser->parse(
+            file_get_contents(
+                $this->aboutFile
+            )
+        );
     }
 }

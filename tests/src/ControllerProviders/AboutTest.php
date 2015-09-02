@@ -47,7 +47,7 @@ class AboutTest extends \Silex\WebTestCase
      */
     public function setUp()
     {
-        parent::setUp();
+        // To no call de parent setUp.
     }
     /**
      * Tears down the fixture. This method is called after a test is executed.
@@ -56,7 +56,6 @@ class AboutTest extends \Silex\WebTestCase
      */
     protected function tearDown()
     {
-        parent::tearDown();
     }
 
     /**
@@ -67,20 +66,6 @@ class AboutTest extends \Silex\WebTestCase
     public function createApplication()
     {
         $app = new NachoNerd\MarkdownBlog\Application();
-        $reflectedObject = new \ReflectionClass(
-            '\NachoNerd\MarkdownBlog\Application'
-        );
-
-        $path = realpath(__DIR__."/../../resources/about/config/")."/";
-        $rp = $reflectedObject->getProperty('configPath');
-        $rp->setAccessible(true);
-        $rp->setValue($app, $path);
-
-        $path = realpath(__DIR__."/../../resources/about/views/")."/";
-        $rp1 = $reflectedObject->getProperty('viewsPath');
-        $rp1->setAccessible(true);
-        $rp1->setValue($app, $path);
-
         return $app;
     }
 
@@ -100,6 +85,100 @@ class AboutTest extends \Silex\WebTestCase
     }
 
     /**
+     * TestHeaderReander
+     *
+     * @return void
+     */
+    public function testMarkdownAboutPath()
+    {
+        $about = new \NachoNerd\MarkdownBlog\ControllerProviders\About();
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\ControllerProviders\About'
+        );
+        $rp = $reflectedObject->getProperty('aboutFile');
+        $rp->setAccessible(true);
+
+        $this->assertEquals(
+            realpath(__DIR__."/../../../markdowns/misc/about.md"),
+            $rp->getValue($about)
+        );
+    }
+
+    /**
+     * TestMarkdownAboutGeneratorFail
+     *
+     * @return void
+     */
+    public function testMarkdownAboutGeneratorFail()
+    {
+        $about = new \NachoNerd\MarkdownBlog\ControllerProviders\About();
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\ControllerProviders\About'
+        );
+        $rp = $reflectedObject->getProperty('aboutFile');
+        $rp->setAccessible(true);
+        $rp->setValue(
+            $about,
+            realpath(__DIR__."/../../resources/about/about.md")
+        );
+
+        $method = new ReflectionMethod(
+            '\NachoNerd\MarkdownBlog\ControllerProviders\About',
+            'prepareAboutContect'
+        );
+        $method->setAccessible(true);
+
+        $message = "";
+        try {
+            $method->invoke($about);
+        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
+            $message = $e->getMessage();
+        }
+
+        $this->assertEquals(
+            realpath(__DIR__."/../../resources/about/about.md")." not found",
+            $message
+        );
+    }
+
+    /**
+     * TestMarkdownAboutGeneratorSuccess
+     *
+     * @return void
+     */
+    public function testMarkdownAboutGeneratorSuccess()
+    {
+        $about = new \NachoNerd\MarkdownBlog\ControllerProviders\About();
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\ControllerProviders\About'
+        );
+        $parser = new \cebe\markdown\MarkdownExtra();
+        $html = $parser->parse(
+            file_get_contents(
+                realpath(__DIR__."/../../../markdowns/misc/about.md")
+            )
+        );
+
+        $method = new ReflectionMethod(
+            '\NachoNerd\MarkdownBlog\ControllerProviders\About',
+            'prepareAboutContect'
+        );
+        $method->setAccessible(true);
+
+        $message = "";
+        try {
+            $message = $method->invoke($about);
+        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
+            $message = $e->getMessage();
+        }
+
+        $this->assertEquals(
+            $message,
+            $html
+        );
+    }
+
+    /**
      * TestNotAbout
      *
      * @param string $method HTTP METHOD
@@ -110,6 +189,22 @@ class AboutTest extends \Silex\WebTestCase
      */
     public function testNotMethodGet($method)
     {
+        $this->app = $this->createApplication();
+
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\Application'
+        );
+
+        $path = realpath(__DIR__."/../../resources/about/config/")."/";
+        $rp = $reflectedObject->getProperty('configPath');
+        $rp->setAccessible(true);
+        $rp->setValue($this->app, $path);
+
+        $path = realpath(__DIR__."/../../resources/about/views/")."/";
+        $rp1 = $reflectedObject->getProperty('viewsPath');
+        $rp1->setAccessible(true);
+        $rp1->setValue($this->app, $path);
+
         $client = $this->createClient();
         $client->request($method, '/about/');
         $response = $client->getResponse();

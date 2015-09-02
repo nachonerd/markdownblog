@@ -77,11 +77,12 @@ class Application extends \Silex\Application
      * to boot all service providers when not handling a request.
      *
      * @return void
-     *
-     * @codeCoverageIgnore
      */
     public function boot()
     {
+        $this->register(
+            new \Silex\Provider\UrlGeneratorServiceProvider()
+        );
         $this->register(
             new \Silex\Provider\TwigServiceProvider(),
             array(
