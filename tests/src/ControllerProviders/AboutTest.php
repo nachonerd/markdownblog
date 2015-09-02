@@ -213,4 +213,125 @@ class AboutTest extends \Silex\WebTestCase
             str_replace("\n", "", $response->getContent())
         );
     }
+
+    /**
+     * TestUnderContruct
+     *
+     * @return void
+     */
+    public function testUnderContruct()
+    {
+        $className = "\NachoNerd\MarkdownBlog\Application";
+        $className1 = "\NachoNerd\MarkdownBlog\Factories\ControllerProvider";
+
+        $about = new \NachoNerd\MarkdownBlog\ControllerProviders\About();
+
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\ControllerProviders\About'
+        );
+        $rp = $reflectedObject->getProperty('aboutFile');
+        $rp->setAccessible(true);
+        $rp->setValue(
+            $about,
+            realpath(__DIR__."/../../resources/about/about.md")
+        );
+
+        $this->app = $this->getMock(
+            $className,
+            array('getControllerProviderFactory')
+        );
+
+        $factory = $this->getMockBuilder($className1)
+            ->setMethods(array('create'))
+            ->getMock();
+
+        $factory->expects($this->any())
+            ->method('create')
+            ->willReturn($about);
+
+        $this->app->expects($this->any())
+            ->method('getControllerProviderFactory')
+            ->willReturn($factory);
+
+        $reflectedObject = new \ReflectionClass(
+            $className
+        );
+
+        $path = realpath(__DIR__."/../../resources/about/config/")."/";
+        $rp = $reflectedObject->getProperty('configPath');
+        $rp->setAccessible(true);
+        $rp->setValue($this->app, $path);
+
+        $path = realpath(__DIR__."/../../resources/about/views/")."/";
+        $rp1 = $reflectedObject->getProperty('viewsPath');
+        $rp1->setAccessible(true);
+        $rp1->setValue($this->app, $path);
+
+        $client = $this->createClient();
+        $client->request('GET', '/about/');
+        $response = $client->getResponse();
+        $this->assertEquals(
+            'Under Construct',
+            str_replace("\n", "", $response->getContent())
+        );
+    }
+
+    /**
+     * testSuccess
+     *
+     * @return void
+     */
+    public function testSuccess()
+    {
+        $className = "\NachoNerd\MarkdownBlog\Application";
+        $className1 = "\NachoNerd\MarkdownBlog\Factories\ControllerProvider";
+
+        $about = new \NachoNerd\MarkdownBlog\ControllerProviders\About();
+
+        $parser = new \cebe\markdown\MarkdownExtra();
+        $html = $parser->parse(
+            file_get_contents(
+                realpath(__DIR__."/../../../markdowns/misc/about.md")
+            )
+        );
+
+        $this->app = $this->getMock(
+            $className,
+            array('getControllerProviderFactory')
+        );
+
+        $factory = $this->getMockBuilder($className1)
+            ->setMethods(array('create'))
+            ->getMock();
+
+        $factory->expects($this->any())
+            ->method('create')
+            ->willReturn($about);
+
+        $this->app->expects($this->any())
+            ->method('getControllerProviderFactory')
+            ->willReturn($factory);
+
+        $reflectedObject = new \ReflectionClass(
+            $className
+        );
+
+        $path = realpath(__DIR__."/../../resources/about/config/")."/";
+        $rp = $reflectedObject->getProperty('configPath');
+        $rp->setAccessible(true);
+        $rp->setValue($this->app, $path);
+
+        $path = realpath(__DIR__."/../../resources/about/views/")."/";
+        $rp1 = $reflectedObject->getProperty('viewsPath');
+        $rp1->setAccessible(true);
+        $rp1->setValue($this->app, $path);
+
+        $client = $this->createClient();
+        $client->request('GET', '/about/');
+        $response = $client->getResponse();
+        $this->assertEquals(
+            str_replace("\n", "", $html),
+            str_replace("\n", "", $response->getContent())
+        );
+    }
 }

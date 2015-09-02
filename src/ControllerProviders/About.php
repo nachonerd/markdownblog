@@ -84,7 +84,16 @@ class About implements \Silex\ControllerProviderInterface
      */
     public function index(Application $app)
     {
-        return 'Dummy Index';
+        try {
+            $about = $this->prepareAboutContect();
+        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
+            return $app['twig']->render("misc/underconstruct.html.twig");
+        }
+
+        return $app['twig']->render(
+            "about.html.twig",
+            array('content' => $about)
+        );
     }
 
     /**
