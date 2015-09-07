@@ -89,6 +89,13 @@ class Application extends \Silex\Application
                 'twig.path' => $this->viewsPath
             )
         );
+        $filename = $this->configPath."config.yml";
+        $this->verifyFileExists($filename);
+        $this->register(
+            new \DerAlex\Silex\YamlConfigServiceProvider(
+                $this->configPath."config.yml"
+            )
+        );
         $this->error(
             function (\Exception $e, $codeStatus) {
                 return $this->errorPage($e, $codeStatus);
@@ -110,12 +117,7 @@ class Application extends \Silex\Application
     protected function parserYaml($filename)
     {
         $filename = $this->configPath.$filename;
-        if (!file_exists($filename)) {
-            throw new \NachoNerd\MarkdownBlog\Exceptions\WrongConfig(
-                "$filename file not exists, verify the manual.",
-                1
-            );
-        }
+        $this->verifyFileExists($filename);
         $values = array();
         try {
             $yaml = new \Symfony\Component\Yaml\Parser();
@@ -230,6 +232,26 @@ class Application extends \Silex\Application
                 $this->mount($path, $provider);
             }
         }
+    }
+
+    /**
+     * Verify File Exists
+     *
+     * @param string $filename Filename
+     *
+     * @return Boolean
+     *
+     * @throws \NachoNerd\MarkdownBlog\Exceptions\WrongConfig
+     */
+    protected function verifyFileExists($filename)
+    {
+        if (!file_exists($filename)) {
+            throw new \NachoNerd\MarkdownBlog\Exceptions\WrongConfig(
+                "$filename file not exists, verify the manual.",
+                1
+            );
+        }
+        return true;
     }
 
     /**

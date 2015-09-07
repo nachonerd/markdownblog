@@ -1010,12 +1010,78 @@ YAML;
             realpath(__DIR__."/../resources/")."/"
         );
 
-        $message = "";
-        $values = "";
+        $pass = false;
         try {
-            $method->invoke($app);
+            $values = $method->invoke($app);
+            $pass = true;
         } catch (\NachoNerd\MarkdownBlog\Exceptions\WrongConfig $e) {
             $message = $e->getMessage();
         }
+
+        $this->assertEquals(
+            true,
+            $pass
+        );
+    }
+
+    /**
+     * ProviderVeriyFileNotExist
+     *
+     * @return array
+     */
+    public function providerVeriyFileNotExist()
+    {
+        return array(
+            array("config.yml", "config.yml file not exists, verify the manual."),
+        );
+    }
+
+    /**
+     * Test Veriy File No Exist
+     *
+     * When the file routes.yml not exist Application Class throws a
+     * WrongConfigException with message: routes.yml file not exists,
+     * verify the manual.
+     * When the file errors.yml not exist Application Class throws a
+     * WrongConfigException with message: errors.yml file not exists,
+     * verify the manual.
+     *
+     * @param string $filename        YAML File Name
+     * @param string $expectedMessage Exception Expected Message
+     *
+     * @return void
+     *
+     * @dataProvider providerVeriyFileNotExist
+     */
+    public function testVeriyFileNotExist($filename, $expectedMessage)
+    {
+        $app = new \NachoNerd\MarkdownBlog\Application();
+
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\Application'
+        );
+
+        $path = realpath(__DIR__."/../resources/")."/";
+        $rp = $reflectedObject->getProperty('configPath');
+        $rp->setAccessible(true);
+        $rp->setValue($app, $path);
+
+        $method = new ReflectionMethod(
+            '\NachoNerd\MarkdownBlog\Application',
+            'verifyFileExists'
+        );
+        $method->setAccessible(true);
+
+        $message = "";
+        try {
+            $method->invoke($app, $path.$filename);
+        } catch (\NachoNerd\MarkdownBlog\Exceptions\WrongConfig $e) {
+            $message = $e->getMessage();
+        }
+
+        $this->assertEquals(
+            $path.$expectedMessage,
+            $message
+        );
     }
 }
