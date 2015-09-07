@@ -277,7 +277,7 @@ class AboutTest extends \Silex\WebTestCase
     }
 
     /**
-     * testSuccess
+     * TestSuccess
      *
      * @return void
      */

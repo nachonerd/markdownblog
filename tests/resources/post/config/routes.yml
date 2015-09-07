@@ -1,0 +1,5 @@
+# routes.yml
+post:
+    paths:
+        - /post
+    _provider: 'Post'
