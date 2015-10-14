@@ -30,9 +30,10 @@
 namespace NachoNerd\MarkdownBlog\ControllerProviders;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
- * DummyProvider Class
+ * Home Class
  *
  * @category   ControllerProvider
  * @package    NachoNerdMarkdownBlog
@@ -42,77 +43,46 @@ use Silex\ControllerProviderInterface;
  * @license    GNU GPL v3
  * @link       https://github.com/nachonerd/markdownblog
  */
-class About implements \Silex\ControllerProviderInterface
+class Home implements \Silex\ControllerProviderInterface
 {
-    /**
-     * About File Path
-     *
-     * @var string
-     */
-    protected $aboutFile = "";
-
-    /**
-     * About
-     */
-    public function __construct()
-    {
-        $this->aboutFile = realpath(__DIR__."/../../markdowns/misc/about.md");
-    }
-
     /**
      * Connect
      *
      * @param Application $app Silex Application
      *
-     * @return voidt
+     * @return void
      */
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
-        $controllers
-            ->get('/', array($this, 'index'))
-            ->bind('about_index');
         return $controllers;
     }
 
     /**
-     * Index About Page
+     * GetPosts
      *
-     * @param \Silex\Application $app Silex Application
+     * @param \Silex\Application $app    Application current Instance
+     * @param integer            $limit  Maximun size of post
+     * @param integer            $offset Start element
      *
-     * @return String
-     */
-    public function index(Application $app)
-    {
-        try {
-            $about = $this->prepareAboutContect();
-        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
-            return $app['twig']->render("misc/underconstruct.html.twig");
-        }
-
-        return $app['twig']->render(
-            "about.html.twig",
-            array('content' => $about)
-        );
-    }
-
-    /**
-     * PrepareAboutContect
-     *
-     * @return String
+     * @return array
      *
      * @throws \NachoNerd\MarkdownBlog\Exceptions\FileNotFound
      */
-    protected function prepareAboutContect()
+    protected function getPosts(Application $app, $limit = 10, $offset = 0)
     {
-        if (!file_exists($this->aboutFile)) {
+        try {
+            $files = $app->parserYaml("posts.yml");
+        } catch (\NachoNerd\MarkdownBlog\Exceptions\WrongConfig $e) {
             throw new \NachoNerd\MarkdownBlog\Exceptions\FileNotFound(
-                $this->aboutFile." not found",
-                9
+                "Not Found Any Post", 12
             );
         }
-        return file_get_contents(
-            $this->aboutFile
-        );
+        if (count($files) <= 0) {
+            throw new \NachoNerd\MarkdownBlog\Exceptions\FileNotFound(
+                "Not Found Any Post", 12
+            );
+        }
+        return array_slice($files, $offset, $limit);
     }
 }

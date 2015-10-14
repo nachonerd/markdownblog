@@ -1,2 +1,6 @@
 post:
     limmit: 10
+markdown:
+    flavor: "extra"
+    path: "markdowns"
+    filter: "/\.md/"

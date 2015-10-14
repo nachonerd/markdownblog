@@ -1,0 +1,26 @@
+# posts.yml
+- title: Post 1
+  brief: Last Post description
+  author: Some Guy
+  file: post1.md
+  date: 20150714T14:20:20
+- title: Post 2
+  brief: Last Post description
+  author: Some Guy
+  file: post2.md
+  date: 20150714T14:20:20
+- title: Post 3
+  brief: Last Post description
+  author: Some Guy
+  file: post3.md
+  date: 20150714T14:20:20
+- title: Post 4
+  brief: Last Post description
+  author: Some Guy
+  file: post4.md
+  date: 20150714T14:20:20
+- title: Post 5
+  brief: Last Post description
+  author: Some Guy
+  file: post5.md
+  date: 20150714T14:20:20

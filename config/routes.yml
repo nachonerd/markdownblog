@@ -3,12 +3,12 @@ home:
     paths:
         - /home
         - /
-    _controller: 'Home'
+    _provider: 'Home'
 post:
     paths:
         - /post
-    _controller: 'Post'
+    _provider: 'Post'
 about:
     paths:
         - /about
-    _controller: 'About'
+    _provider: 'About'

@@ -80,6 +80,13 @@ class Application extends \Silex\Application
      */
     public function boot()
     {
+        $filename = $this->configPath."config.yml";
+        $this->verifyFileExists($filename);
+        $this->register(
+            new \DerAlex\Silex\YamlConfigServiceProvider(
+                $filename
+            )
+        );
         $this->register(
             new \Silex\Provider\UrlGeneratorServiceProvider()
         );
@@ -89,11 +96,18 @@ class Application extends \Silex\Application
                 'twig.path' => $this->viewsPath
             )
         );
-        $filename = $this->configPath."config.yml";
-        $this->verifyFileExists($filename);
+
         $this->register(
-            new \DerAlex\Silex\YamlConfigServiceProvider(
-                $this->configPath."config.yml"
+            new \NachoNerd\Silex\Finder\Provider()
+        );
+        $path = realpath(__DIR__."/../")."/".$this["config"]["markdown"]["path"];
+
+        $this->register(
+            new \NachoNerd\Silex\Markdown\Provider(),
+            array(
+                "nn.markdown.path" => $path,
+                "nn.markdown.flavor" => $this["config"]["markdown"]["flavor"],
+                "nn.markdown.filter" => $this["config"]["markdown"]["filter"]
             )
         );
         $this->error(
@@ -114,7 +128,7 @@ class Application extends \Silex\Application
      *
      * @throws \NachoNerd\MarkdownBlog\Exceptions\WrongConfig
      */
-    protected function parserYaml($filename)
+    public function parserYaml($filename)
     {
         $filename = $this->configPath.$filename;
         $this->verifyFileExists($filename);

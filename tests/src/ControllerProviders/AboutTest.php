@@ -152,11 +152,8 @@ class AboutTest extends \Silex\WebTestCase
         $reflectedObject = new \ReflectionClass(
             '\NachoNerd\MarkdownBlog\ControllerProviders\About'
         );
-        $parser = new \cebe\markdown\MarkdownExtra();
-        $html = $parser->parse(
-            file_get_contents(
-                realpath(__DIR__."/../../../markdowns/misc/about.md")
-            )
+        $mardown = file_get_contents(
+            realpath(__DIR__."/../../../markdowns/misc/about.md")
         );
 
         $method = new ReflectionMethod(
@@ -174,7 +171,7 @@ class AboutTest extends \Silex\WebTestCase
 
         $this->assertEquals(
             $message,
-            $html
+            $mardown
         );
     }
 

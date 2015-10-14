@@ -111,7 +111,7 @@ class Post implements \Silex\ControllerProviderInterface
         try {
             $hmtl = $this->preparePostContect($filename);
         } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
-            $app->abort(404, 'Last Post Not Found');
+            $app->abort(404, 'Post Not Found');
         }
         return $hmtl;
     }

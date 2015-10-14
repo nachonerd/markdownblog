@@ -1,0 +1,6 @@
+# routes.yml
+home:
+    paths:
+        - /home
+        - /
+    _provider: 'Home'
