@@ -55,7 +55,38 @@ class Home implements \Silex\ControllerProviderInterface
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
+        $controllers
+            ->get('/{offset}', array($this, 'index'))
+            ->bind('home_page');
+        $controllers
+            ->get('/', array($this, 'index'))
+            ->bind('home');
         return $controllers;
+    }
+
+    /**
+     * Home Index
+     *
+     * @param Application $app    Application
+     * @param integer     $offset Start element
+     *
+     * @return String
+     */
+    public function index(Application $app, $offset = 0)
+    {
+        try {
+            $post = $this->getPosts(
+                $app,
+                $app["config"]["post"]["limmit"],
+                $offset
+            );
+        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
+            $app->abort(503, "Under COnstruction");
+        }
+        return $app['twig']->render(
+            "home.html.twig",
+            array('posts' => $post)
+        );
     }
 
     /**
@@ -83,6 +114,6 @@ class Home implements \Silex\ControllerProviderInterface
                 "Not Found Any Post", 12
             );
         }
-        return array_slice($files, $offset, $limit);
+        return array_slice($files, $offset, $limit, true);
     }
 }

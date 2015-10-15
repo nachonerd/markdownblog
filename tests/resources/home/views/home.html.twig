@@ -1,1 +1,5 @@
-{{ content|raw }}
+<lu>
+    {% for post in posts %}
+        <li>{{ post.file }}</li>
+    {% endfor %}
+</lu>

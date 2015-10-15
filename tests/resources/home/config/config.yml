@@ -1,5 +1,5 @@
 post:
-    limmit: 10
+    limmit: 2
 markdown:
     flavor: "extra"
     path: "tests/resources/home/posts"

@@ -197,9 +197,9 @@ class HomeTest extends \Silex\WebTestCase
 
         return array(
             array(1, 0, array($one)),
-            array(2, 2, array($three, $four)),
-            array(3, 3, array($four, $five)),
-            array(5, 4, array($five)),
+            array(2, 2, array(2 => $three, 3 => $four)),
+            array(3, 3, array(3 => $four, 4 => $five)),
+            array(5, 4, array(4 => $five)),
             array(15, 0, array($one, $two, $three, $four, $five))
         );
     }
@@ -245,6 +245,215 @@ class HomeTest extends \Silex\WebTestCase
         $this->assertEquals(
             $return,
             $result
+        );
+    }
+
+    /**
+     * ProviderTestNotGet
+     *
+     * @return array
+     */
+    public function providerTestNotGet()
+    {
+        return array(
+            array("POST", '/home/'),
+            array("POST", '/home//'),
+            array("POST", '/home'),
+            array("POST", '/'),
+            array("PUT", '/home/'),
+            array("PUT", '/home//'),
+            array("PUT", '/home'),
+            array("PUT", '/'),
+            array("PATCH", '/home/'),
+            array("PATCH", '/home//'),
+            array("PATCH", '/home'),
+            array("PATCH", '/'),
+            array("DELETE", '/home/'),
+            array("DELETE", '/home//'),
+            array("DELETE", '/home'),
+            array("DELETE", '/')
+        );
+    }
+
+    /**
+     * TestNotAbout
+     *
+     * @param string $method   HTTP METHOD
+     * @param string $endpoint Endpoint
+     *
+     * @return void
+     *
+     * @dataProvider providerTestNotGet
+     */
+    public function testNotMethodGet($method, $endpoint)
+    {
+        $this->app = $this->createApplication();
+
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\Application'
+        );
+
+        $path = realpath(__DIR__."/../../resources/home/config/")."/";
+        $rp = $reflectedObject->getProperty('configPath');
+        $rp->setAccessible(true);
+        $rp->setValue($this->app, $path);
+
+        $path = realpath(__DIR__."/../../resources/home/views/")."/";
+        $rp1 = $reflectedObject->getProperty('viewsPath');
+        $rp1->setAccessible(true);
+        $rp1->setValue($this->app, $path);
+
+        $client = $this->createClient();
+        $client->request($method, $endpoint);
+        $response = $client->getResponse();
+        $this->assertEquals(
+            'Error Some Custom Error',
+            str_replace("\n", "", $response->getContent())
+        );
+    }
+
+    /**
+     * ProviderTestPostEmpty
+     *
+     * @return array
+     */
+    public function providerTestPostEmpty()
+    {
+        return array(
+            array('/home/'),
+            array('/home/2')
+        );
+    }
+
+    /**
+     * TestPostEmpty
+     *
+     * @param string $endpoint Endpoint
+     *
+     * @return void
+     *
+     * @dataProvider providerTestPostEmpty
+     */
+    public function testPostEmpty($endpoint)
+    {
+        $method = "GET";
+        $this->app = $this->createApplication();
+
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\Application'
+        );
+        $path = realpath(__DIR__."/../../resources/home/empty_config/")."/";
+        $rp = $reflectedObject->getProperty('configPath');
+        $rp->setAccessible(true);
+        $rp->setValue($this->app, $path);
+
+        $path = realpath(__DIR__."/../../resources/home/views/")."/";
+        $rp1 = $reflectedObject->getProperty('viewsPath');
+        $rp1->setAccessible(true);
+        $rp1->setValue($this->app, $path);
+
+        $client = $this->createClient();
+        $client->request($method, $endpoint);
+        $response = $client->getResponse();
+
+        $this->assertEquals(
+            503,
+            $response->getStatusCode()
+        );
+    }
+
+    /**
+     * TestSuccess
+     *
+     * @param string $endpoint Endpoint
+     *
+     * @return void
+     *
+     * @dataProvider providerTestPostEmpty
+     */
+    public function testPostNoExist($endpoint)
+    {
+        $method = "GET";
+        $this->app = $this->createApplication();
+
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\Application'
+        );
+        $path = realpath(__DIR__."/../../resources/home/noexist_config/")."/";
+        $rp = $reflectedObject->getProperty('configPath');
+        $rp->setAccessible(true);
+        $rp->setValue($this->app, $path);
+
+        $path = realpath(__DIR__."/../../resources/home/views/")."/";
+        $rp1 = $reflectedObject->getProperty('viewsPath');
+        $rp1->setAccessible(true);
+        $rp1->setValue($this->app, $path);
+
+        $client = $this->createClient();
+        $client->request($method, $endpoint);
+        $response = $client->getResponse();
+
+        $this->assertEquals(
+            503,
+            $response->getStatusCode()
+        );
+    }
+
+    /**
+     * ProviderTestSuccess
+     *
+     * @return array
+     */
+    public function providerTestSuccess()
+    {
+        $html1 = "<lu><li>post1.md</li><li>post2.md</li></lu>";
+        $html2 = "<lu><li>post3.md</li><li>post4.md</li></lu>";
+        return array(
+            array("/home/", $html1),
+            array("/home/2", $html2)
+        );
+    }
+
+    /**
+     * TestPostNoExist
+     *
+     * @param string $endpoint Endpoint
+     * @param string $html     HTML Content
+     *
+     * @return void
+     *
+     * @dataProvider providerTestSuccess
+     */
+    public function testSuccess($endpoint, $html)
+    {
+        $method = "GET";
+        $this->app = $this->createApplication();
+
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\Application'
+        );
+        $path = realpath(__DIR__."/../../resources/home/config/")."/";
+        $rp = $reflectedObject->getProperty('configPath');
+        $rp->setAccessible(true);
+        $rp->setValue($this->app, $path);
+
+        $path = realpath(__DIR__."/../../resources/home/views/")."/";
+        $rp1 = $reflectedObject->getProperty('viewsPath');
+        $rp1->setAccessible(true);
+        $rp1->setValue($this->app, $path);
+
+        $client = $this->createClient();
+        $client->request($method, $endpoint);
+        $response = $client->getResponse();
+
+        $this->assertEquals(
+            200,
+            $response->getStatusCode()
+        );
+
+        $this->assertEquals(
+            str_replace("\n", "", $html),
+            str_replace(" ", "", str_replace("\n", "", $response->getContent()))
         );
     }
 }
