@@ -7,7 +7,7 @@ Markdown Blog
 Minimalist Markdown Blog Framework based on Silex
 
 ### License
-GNU GPL v3
+GPL-3.0
 
 ### Requirements
 - [PHP version 5.4](http://php.net/releases/5_4_0.php)
