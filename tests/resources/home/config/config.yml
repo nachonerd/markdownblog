@@ -1,0 +1,6 @@
+post:
+    limmit: 2
+markdown:
+    flavor: "extra"
+    path: "tests/resources/home/posts"
+    filter: "/\.md/"

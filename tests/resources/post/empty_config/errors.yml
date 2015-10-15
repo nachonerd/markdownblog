@@ -1,0 +1,3 @@
+# errors.yml
+default:
+    page: other.html.twig

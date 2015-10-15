@@ -1,0 +1,5 @@
+# routes.yml
+about:
+    paths:
+        - /about
+    _provider: 'About'
