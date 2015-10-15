@@ -194,8 +194,31 @@ class PostTest extends \Silex\WebTestCase
         hastam.Suaiuvenciquippepraesigniapetens.Luctuomen,
         virisinemanusetnoviferarstabis.</p>
 HTML;
+        $this->app = $this->createApplication();
+        $reflectedObject = new \ReflectionClass(
+            '\NachoNerd\MarkdownBlog\Application'
+        );
+
+        $path = realpath(__DIR__."/../../resources/post/config/")."/";
+        $rp = $reflectedObject->getProperty('configPath');
+        $rp->setAccessible(true);
+        $rp->setValue($this->app, $path);
+
+        $path = realpath(__DIR__."/../../resources/post/views/")."/";
+        $rp1 = $reflectedObject->getProperty('viewsPath');
+        $rp1->setAccessible(true);
+        $rp1->setValue($this->app, $path);
+        $this->app->boot();
+
+        $content = "";
+        $finderLast = $this->app['nn.markdown']->getNLastFiles(1);
+        foreach ($finderLast as $file) {
+            $content = $file->getContents();
+        }
+        $last = $this->app['nn.markdown']->parse($content);
+
         return array(
-            array('/post/', $html1),
+            array('/post/', $last),
             array('/post/Zmlyc3RfMjAxNTAxMDI=/', $html2),
             array('/post/c2Vjb25kXzIwMTUwMTAz/', $html1)
         );
