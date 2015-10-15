@@ -46,21 +46,6 @@ use Symfony\Component\HttpFoundation\Response;
 class Post implements \Silex\ControllerProviderInterface
 {
     /**
-     * Posts File Path
-     *
-     * @var string
-     */
-    protected $postPath = "";
-
-    /**
-     * About
-     */
-    public function __construct()
-    {
-        $this->postPath = realpath(__DIR__."/../../markdowns/posts/")."/";
-    }
-
-    /**
      * Connect
      *
      * @param Application $app Silex Application
@@ -89,12 +74,10 @@ class Post implements \Silex\ControllerProviderInterface
      */
     public function index(Application $app)
     {
-        try {
-            $lastPost = $this->getLastPost();
-        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
-            $app->abort(404, 'Last Post Not Found');
-        }
-        return $this->preparePostContect($lastPost);
+        $html = $app['twig']->render(
+            "postlast.html.twig"
+        );
+        return $html;
     }
 
     /**
@@ -109,67 +92,13 @@ class Post implements \Silex\ControllerProviderInterface
     {
         $filename = base64_decode($filename64).".md";
         try {
-            $hmtl = $this->preparePostContect($filename);
-        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
-            $app->abort(404, 'Post Not Found');
-        }
-        return $hmtl;
-    }
-
-    /**
-     * Get Last Post File
-     *
-     * @return string
-     *
-     * @throws \NachoNerd\MarkdownBlog\Exceptions\FileNotFound
-     */
-    protected function getLastPost()
-    {
-        $validFiles = array();
-        foreach (new \DirectoryIterator($this->postPath) as $fileInfo) {
-            if ($fileInfo->isDot() || $fileInfo->getExtension() != "md") {
-                continue;
-            }
-            $onlyName = str_replace(".md", "", $fileInfo->getFilename());
-            $parts = explode('_', $onlyName);
-            if ((count($parts) == 2) && is_numeric($parts[1])) {
-                $validFiles[$parts[1]] = $fileInfo->getFilename();
-            }
-        }
-
-        if (count($validFiles) > 1) {
-            ksort($validFiles, SORT_NUMERIC);
-            return array_pop($validFiles);
-        }
-
-        throw new \NachoNerd\MarkdownBlog\Exceptions\FileNotFound(
-            "Not Found Last Post",
-            10
-        );
-    }
-
-    /**
-     * Prepare Post Contect
-     *
-     * @param string $filename Filename
-     *
-     * @return string
-     *
-     * @throws \NachoNerd\MarkdownBlog\Exceptions\FileNotFound
-     */
-    protected function preparePostContect($filename)
-    {
-        if (!file_exists($this->postPath.$filename)) {
-            throw new \NachoNerd\MarkdownBlog\Exceptions\FileNotFound(
-                "Not Found File ".$filename,
-                11
+            $html = $app['twig']->render(
+                "post.html.twig",
+                array( "filename" => $filename)
             );
+        } catch (\Exception $e) {
+            $app->abort(404, "Post Not Found");
         }
-        $parser = new \cebe\markdown\MarkdownExtra();
-        return $parser->parse(
-            file_get_contents(
-                $this->postPath.$filename
-            )
-        );
+        return $html;
     }
 }

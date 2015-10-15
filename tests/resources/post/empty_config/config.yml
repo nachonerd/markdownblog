@@ -2,5 +2,5 @@ post:
     limmit: 10
 markdown:
     flavor: "extra"
-    path: "tests/resources/post/posts/"
+    path: "tests/resources/post/empty/"
     filter: "/\.md/"

@@ -68,221 +68,6 @@ class PostTest extends \Silex\WebTestCase
         $app = new NachoNerd\MarkdownBlog\Application();
         return $app;
     }
-
-    /**
-     * TestMarkdownPostsPath
-     *
-     * @return void
-     */
-    public function testMarkdownPostsPath()
-    {
-        $post = new \NachoNerd\MarkdownBlog\ControllerProviders\Post();
-        $reflectedObject = new \ReflectionClass(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post'
-        );
-        $rp = $reflectedObject->getProperty('postPath');
-        $rp->setAccessible(true);
-
-        $this->assertEquals(
-            realpath(__DIR__."/../../../markdowns/posts/")."/",
-            $rp->getValue($post)
-        );
-    }
-
-    /**
-     * TestGetLastPostEmpty
-     *
-     * @return void
-     */
-    public function testGetLastPostEmpty()
-    {
-        $post = new \NachoNerd\MarkdownBlog\ControllerProviders\Post();
-        $reflectedObject = new \ReflectionClass(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post'
-        );
-        $rp = $reflectedObject->getProperty('postPath');
-        $rp->setAccessible(true);
-        $rp->setValue(
-            $post,
-            realpath(__DIR__."/../../resources/post/empty/")."/"
-        );
-
-        $method = new ReflectionMethod(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post',
-            'getLastPost'
-        );
-        $method->setAccessible(true);
-
-        $message = "";
-        try {
-            $method->invoke($post);
-        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
-            $message = $e->getMessage();
-        }
-
-        $this->assertEquals(
-            "Not Found Last Post",
-            $message
-        );
-    }
-
-    /**
-     * TestGetLastPostUncorrect
-     *
-     * @return void
-     */
-    public function testGetLastPostUncorrect()
-    {
-        $post = new \NachoNerd\MarkdownBlog\ControllerProviders\Post();
-        $reflectedObject = new \ReflectionClass(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post'
-        );
-        $rp = $reflectedObject->getProperty('postPath');
-        $rp->setAccessible(true);
-        $rp->setValue(
-            $post,
-            realpath(__DIR__."/../../resources/post/postsuncorrect/")."/"
-        );
-
-        $method = new ReflectionMethod(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post',
-            'getLastPost'
-        );
-        $method->setAccessible(true);
-
-        $message = "";
-        try {
-            $method->invoke($post);
-        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
-            $message = $e->getMessage();
-        }
-
-        $this->assertEquals(
-            "Not Found Last Post",
-            $message
-        );
-    }
-
-    /**
-     * TestGetLastPostSuccess
-     *
-     * @return void
-     */
-    public function testGetLastPostSuccess()
-    {
-        $post = new \NachoNerd\MarkdownBlog\ControllerProviders\Post();
-        $reflectedObject = new \ReflectionClass(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post'
-        );
-        $rp = $reflectedObject->getProperty('postPath');
-        $rp->setAccessible(true);
-        $rp->setValue(
-            $post,
-            realpath(__DIR__."/../../resources/post/posts/")."/"
-        );
-
-        $method = new ReflectionMethod(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post',
-            'getLastPost'
-        );
-        $method->setAccessible(true);
-
-        $message = "";
-        try {
-            $message = $method->invoke($post);
-        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
-            $message = $e->getMessage();
-        }
-
-        $this->assertEquals(
-            "second_20150103.md",
-            $message
-        );
-    }
-
-    /**
-     * TestPreparePostContectFaild
-     *
-     * @return void
-     */
-    public function testPreparePostContectFaild()
-    {
-        $filename = "second_20150103.md";
-        $post = new \NachoNerd\MarkdownBlog\ControllerProviders\Post();
-        $reflectedObject = new \ReflectionClass(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post'
-        );
-        $rp = $reflectedObject->getProperty('postPath');
-        $rp->setAccessible(true);
-        $rp->setValue(
-            $post,
-            realpath(__DIR__."/../../resources/post/empty/")."/"
-        );
-
-        $method = new ReflectionMethod(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post',
-            'preparePostContect'
-        );
-        $method->setAccessible(true);
-
-        $message = "";
-        try {
-            $message = $method->invoke($post, $filename);
-        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
-            $message = $e->getMessage();
-        }
-
-        $this->assertEquals(
-            "Not Found File $filename",
-            $message
-        );
-    }
-
-    /**
-     * TestPreparePostContectSuccess
-     *
-     * @return void
-     */
-    public function testPreparePostContectSuccess()
-    {
-        $filename = "second_20150103.md";
-
-        $parser = new \cebe\markdown\MarkdownExtra();
-        $html = $parser->parse(
-            file_get_contents(
-                realpath(__DIR__."/../../resources/post/posts/")."/".$filename
-            )
-        );
-        $post = new \NachoNerd\MarkdownBlog\ControllerProviders\Post();
-        $reflectedObject = new \ReflectionClass(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post'
-        );
-        $rp = $reflectedObject->getProperty('postPath');
-        $rp->setAccessible(true);
-        $rp->setValue(
-            $post,
-            realpath(__DIR__."/../../resources/post/posts/")."/"
-        );
-
-        $method = new ReflectionMethod(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post',
-            'preparePostContect'
-        );
-        $method->setAccessible(true);
-
-        $message = "";
-        try {
-            $message = $method->invoke($post, $filename);
-        } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
-            $message = $e->getMessage();
-        }
-
-        $this->assertEquals(
-            $html,
-            $message
-        );
-    }
-
     /**
      * ProviderTestNotGet
      *
@@ -351,8 +136,7 @@ class PostTest extends \Silex\WebTestCase
     public function providerTestPostEmpty()
     {
         return array(
-            array('/post/'),
-            array('/post/nofile/')
+            array('/post/bm9maWxl/')
         );
     }
 
@@ -368,40 +152,12 @@ class PostTest extends \Silex\WebTestCase
     public function testPostEmpty($endpoint)
     {
         $method = "GET";
-        $post = new \NachoNerd\MarkdownBlog\ControllerProviders\Post();
-        $reflectedObject = new \ReflectionClass(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post'
-        );
-        $rp = $reflectedObject->getProperty('postPath');
-        $rp->setAccessible(true);
-        $rp->setValue(
-            $post,
-            realpath(__DIR__."/../../resources/post/empty/")."/"
-        );
-
+        $this->app = $this->createApplication();
         $reflectedObject = new \ReflectionClass(
             '\NachoNerd\MarkdownBlog\Application'
         );
 
-        $this->app = $this->getMock(
-            '\NachoNerd\MarkdownBlog\Application',
-            array('getControllerProviderFactory')
-        );
-
-        $factory = $this->getMockBuilder(
-            "\NachoNerd\MarkdownBlog\Factories\ControllerProvider"
-        )->setMethods(array('create'))
-            ->getMock();
-
-        $factory->expects($this->any())
-            ->method('create')
-            ->willReturn($post);
-
-        $this->app->expects($this->any())
-            ->method('getControllerProviderFactory')
-            ->willReturn($factory);
-
-        $path = realpath(__DIR__."/../../resources/post/config/")."/";
+        $path = realpath(__DIR__."/../../resources/post/empty_config/")."/";
         $rp = $reflectedObject->getProperty('configPath');
         $rp->setAccessible(true);
         $rp->setValue($this->app, $path);
@@ -422,72 +178,46 @@ class PostTest extends \Silex\WebTestCase
     }
 
     /**
-     * ProviderTestPost
+     * ProviderTestPostEmpty
      *
      * @return array
      */
-    public function providerTestPost()
+    public function providerTestSuccess()
     {
+        $html1 = "<h1>Toto bella ense ubi</h1>";
+        $html2 = <<<HTML
+        <h1>Totobellaenseubi</h1>
+        <h2>Etdominitellus</h2>
+        <p>Loremmarkdownumfiliasigramen,fecundaperquirereunamSoliuvenesgenerosa.
+        Mittereperetdinumeratpinuquequivellentveteris:proculaltaetantum
+        <ahref="http://seenly.com/">operisquehuncexcipit</a>
+        hastam.Suaiuvenciquippepraesigniapetens.Luctuomen,
+        virisinemanusetnoviferarstabis.</p>
+HTML;
         return array(
-            array('/post/'),
-            array('/post/c2Vjb25kXzIwMTUwMTAz/')
+            array('/post/', $html1),
+            array('/post/Zmlyc3RfMjAxNTAxMDI=/', $html2),
+            array('/post/c2Vjb25kXzIwMTUwMTAz/', $html1)
         );
     }
 
     /**
-     * TestPost
+     * TestSuccess
      *
      * @param string $endpoint Endpoint
+     * @param string $html     HTML
      *
      * @return void
      *
-     * @dataProvider providerTestPost
+     * @dataProvider providerTestSuccess
      */
-    public function testPost($endpoint)
+    public function testSuccess($endpoint, $html)
     {
         $method = "GET";
-
-        $filename = "second_20150103.md";
-
-        $parser = new \cebe\markdown\MarkdownExtra();
-        $html = $parser->parse(
-            file_get_contents(
-                realpath(__DIR__."/../../resources/post/posts/")."/".$filename
-            )
-        );
-
-        $post = new \NachoNerd\MarkdownBlog\ControllerProviders\Post();
-        $reflectedObject = new \ReflectionClass(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post'
-        );
-        $rp = $reflectedObject->getProperty('postPath');
-        $rp->setAccessible(true);
-        $rp->setValue(
-            $post,
-            realpath(__DIR__."/../../resources/post/posts/")."/"
-        );
-
+        $this->app = $this->createApplication();
         $reflectedObject = new \ReflectionClass(
             '\NachoNerd\MarkdownBlog\Application'
         );
-
-        $this->app = $this->getMock(
-            '\NachoNerd\MarkdownBlog\Application',
-            array('getControllerProviderFactory')
-        );
-
-        $factory = $this->getMockBuilder(
-            "\NachoNerd\MarkdownBlog\Factories\ControllerProvider"
-        )->setMethods(array('create'))
-            ->getMock();
-
-        $factory->expects($this->any())
-            ->method('create')
-            ->willReturn($post);
-
-        $this->app->expects($this->any())
-            ->method('getControllerProviderFactory')
-            ->willReturn($factory);
 
         $path = realpath(__DIR__."/../../resources/post/config/")."/";
         $rp = $reflectedObject->getProperty('configPath');
@@ -501,7 +231,6 @@ class PostTest extends \Silex\WebTestCase
 
         $client = $this->createClient();
         $client->request($method, $endpoint);
-
         $response = $client->getResponse();
 
         $this->assertEquals(
@@ -510,88 +239,8 @@ class PostTest extends \Silex\WebTestCase
         );
 
         $this->assertEquals(
-            str_replace("\n", "", $html),
-            str_replace("\n", "", $response->getContent())
-        );
-    }
-
-    /**
-     * ProviderTestPostRedirect
-     *
-     * @return array
-     */
-    public function providerTestPostRedirect()
-    {
-        return array(
-            array('/post'),
-            array('/post/c2Vjb25kXzIwMTUwMTAz')
-        );
-    }
-
-    /**
-     * TestPost
-     *
-     * @param string $endpoint Endpoint
-     *
-     * @return void
-     *
-     * @dataProvider providerTestPostRedirect
-     */
-    public function testPostRedirect($endpoint)
-    {
-        $method = "GET";
-
-        $post = new \NachoNerd\MarkdownBlog\ControllerProviders\Post();
-        $reflectedObject = new \ReflectionClass(
-            '\NachoNerd\MarkdownBlog\ControllerProviders\Post'
-        );
-        $rp = $reflectedObject->getProperty('postPath');
-        $rp->setAccessible(true);
-        $rp->setValue(
-            $post,
-            realpath(__DIR__."/../../resources/post/posts/")."/"
-        );
-
-        $reflectedObject = new \ReflectionClass(
-            '\NachoNerd\MarkdownBlog\Application'
-        );
-
-        $this->app = $this->getMock(
-            '\NachoNerd\MarkdownBlog\Application',
-            array('getControllerProviderFactory')
-        );
-
-        $factory = $this->getMockBuilder(
-            "\NachoNerd\MarkdownBlog\Factories\ControllerProvider"
-        )->setMethods(array('create'))
-            ->getMock();
-
-        $factory->expects($this->any())
-            ->method('create')
-            ->willReturn($post);
-
-        $this->app->expects($this->any())
-            ->method('getControllerProviderFactory')
-            ->willReturn($factory);
-
-        $path = realpath(__DIR__."/../../resources/post/config/")."/";
-        $rp = $reflectedObject->getProperty('configPath');
-        $rp->setAccessible(true);
-        $rp->setValue($this->app, $path);
-
-        $path = realpath(__DIR__."/../../resources/post/views/")."/";
-        $rp1 = $reflectedObject->getProperty('viewsPath');
-        $rp1->setAccessible(true);
-        $rp1->setValue($this->app, $path);
-
-        $client = $this->createClient();
-        $client->request($method, $endpoint);
-
-        $response = $client->getResponse();
-
-        $this->assertEquals(
-            301,
-            $response->getStatusCode()
+            str_replace(" ", "", str_replace("\n", "", $html)),
+            str_replace(" ", "", str_replace("\n", "", $response->getContent()))
         );
     }
 }
