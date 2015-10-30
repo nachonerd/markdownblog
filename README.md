@@ -3,6 +3,8 @@ Markdown Blog
 
 [![Stories in Ready](https://badge.waffle.io/nachonerd/markdownblog.png?label=ready&title=Ready)](http://waffle.io/nachonerd/markdownblog) [![Build Status](https://travis-ci.org/nachonerd/markdownblog.svg?branch=development)](https://travis-ci.org/nachonerd/markdownblog) [![Code Climate](https://codeclimate.com/github/nachonerd/markdownblog/badges/gpa.svg)](https://codeclimate.com/github/nachonerd/markdownblog) [![Test Coverage](https://codeclimate.com/github/nachonerd/markdownblog/badges/coverage.svg)](https://codeclimate.com/github/nachonerd/markdownblog/coverage) [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg?style=flat-square)](https://php.net/)
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/b2f48046-ecf3-4b65-ab83-32f71a82299a/big.png)](https://insight.sensiolabs.com/projects/b2f48046-ecf3-4b65-ab83-32f71a82299a)
+
 ### Description
 Minimalist Markdown Blog Framework based on Silex
 

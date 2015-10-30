@@ -30,7 +30,6 @@
 namespace NachoNerd\MarkdownBlog\ControllerProviders;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Post Class
