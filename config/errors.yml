@@ -1,3 +1,5 @@
 # errors.yml
+503:
+    page: errors/under.html.twig
 default:
     page: default.html.twig
