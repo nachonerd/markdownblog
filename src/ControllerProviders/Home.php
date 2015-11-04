@@ -80,7 +80,7 @@ class Home implements \Silex\ControllerProviderInterface
                 $offset
             );
         } catch (\NachoNerd\MarkdownBlog\Exceptions\FileNotFound $e) {
-            $app->abort(503, "Under COnstruction");
+            $app->abort(503, "Under Construction");
         }
         return $app['twig']->render(
             "home.html.twig",

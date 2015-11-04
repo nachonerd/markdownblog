@@ -179,7 +179,10 @@ class Application extends \Silex\Application
         }
 
         try {
-            $html = $this['twig']->render($code["page"]);
+            $html = $this['twig']->render(
+                $code["page"],
+                array("code" => $codeStatus, "message" => $e->getMessage())
+            );
         } catch (\Twig_Error $e) {
             throw new \NachoNerd\MarkdownBlog\Exceptions\WrongConfig(
                 sprintf(
