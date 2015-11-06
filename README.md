@@ -1,7 +1,7 @@
 Markdown Blog
 ===============
 
-[![Stories in Ready](https://badge.waffle.io/nachonerd/markdownblog.png?label=ready&title=Ready)](http://waffle.io/nachonerd/markdownblog) [![Build Status](https://travis-ci.org/nachonerd/markdownblog.svg?branch=development)](https://travis-ci.org/nachonerd/markdownblog) [![Code Climate](https://codeclimate.com/github/nachonerd/markdownblog/badges/gpa.svg)](https://codeclimate.com/github/nachonerd/markdownblog) [![Test Coverage](https://codeclimate.com/github/nachonerd/markdownblog/badges/coverage.svg)](https://codeclimate.com/github/nachonerd/markdownblog/coverage) [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg?style=flat-square)](https://php.net/)
+[![Stories in Ready](https://badge.waffle.io/nachonerd/markdownblog.png?label=ready&title=Ready)](http://waffle.io/nachonerd/markdownblog) [![Build Status](https://travis-ci.org/nachonerd/markdownblog.svg?branch=master)](https://travis-ci.org/nachonerd/markdownblog) [![Code Climate](https://codeclimate.com/github/nachonerd/markdownblog/badges/gpa.svg)](https://codeclimate.com/github/nachonerd/markdownblog) [![Test Coverage](https://codeclimate.com/github/nachonerd/markdownblog/badges/coverage.svg)](https://codeclimate.com/github/nachonerd/markdownblog/coverage) [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg?style=flat-square)](https://php.net/)
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/4162ca43-6486-4a1c-b429-0c0eba28f7f9/big.png)](https://insight.sensiolabs.com/projects/4162ca43-6486-4a1c-b429-0c0eba28f7f9)
 
